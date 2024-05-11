@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="login_signup.css">
+    <title>Login/Signup</title>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="title-text">
+            <div class="title login">Login Form</div>
+            <div class="title signup">Signup Form</div>
+        </div>
+        <div class="form-container">
+            <div class="slide-controls">
+                <input type="radio" name="slide" id="login" checked>
+                <input type="radio" name="slide" id="signup">
+                <label for="login" class="slide login">Login</label>
+                <label for="signup" class="slide signup">Signup</label>
+                <div class="slider-tab"></div>
+            </div>
+
+            <div class="form-inner">
+                <form action="login.php" method="POST" class="login">
+                    <div class="field">
+                        <input type="text" placeholder="Email Address" name="email" required>
+                    </div>
+                    <div class="field">
+                        <input type="password" placeholder="Password" name="password" required>
+                    </div>
+                    <div class="field">
+                        <select name="user_type" required>
+                            <option value="" disabled selected>Select User Type</option>
+                            <option value="admin">Admin</option>
+                            <option value="customer">Customer</option>
+                        </select>
+                    </div>
+
+                    <div class="pass-link"><a href="#">Forgot password?</a></div>
+                    <div class="field btn">
+                        <div class="btn-layer"></div>
+                        <input type="submit" name="login" value="Login">
+                    </div>
+                    <div class="field">
+                        <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["login"])) {
+                            displayError("Invalid email, password, or user type");
+                        } ?>
+                    </div>
+                    <div class="signup-link">Create an account <a href="">Signup now</a></div>
+                </form>
+
+                <form action="signup.php" method="POST" class="signup">
+                    <div class="field">
+                        <input type="text" placeholder="Name" name="username" required>
+                    </div>
+                    <div class="field">
+                        <input type="text" placeholder="Email Address" name="email" required>
+                    </div>
+                    <div class="field">
+                        <input type="password" placeholder="Password" name="password" required>
+                    </div>
+                    <div class="field">
+                        <input type="password" placeholder="Confirm password" name="confirm_password" required>
+                    </div>
+                    <div class="field">
+                        <select name="user_type" required>
+                            <option value="" disabled selected>Select User Type</option>
+                            <option value="admin">Admin</option>
+                            <option value="customer">Customer</option>
+                        </select>
+                    </div>
+                    <div class="field btn">
+                        <div class="btn-layer"></div>
+                        <input type="submit" name="signup" value="Signup">
+                    </div>
+                    <div class="field">
+                        <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["signup"])) {
+                            displayError("Passwords do not match");
+                        } ?>
+                    </div>
+                    <div class="signup-link">Already have an account? <a href="">Login</a></div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="login_signup.js"></script>
+</body>
+
+</html>

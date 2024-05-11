@@ -1,0 +1,40 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.6;
+    color: var(--secondary);
+    margin: 0;
+    padding: 20px;
+  }
+  
+  p {
+    margin-bottom: 20px;
+  }
+  
+  h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  
+  ul {
+    margin-bottom: 20px;
+  }
+  
+  ul li {
+    list-style-type: disc;
+    margin-left: 20px;
+  }
+  
+  a {
+    color: var(--green);
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
