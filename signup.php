@@ -6,12 +6,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Include database connection file
     include_once "db_connection.php";
 
-    // Get signup form data
+    // Get signup form data including the contact number
     $username = $_POST["username"];
     $email = $_POST["email"];
     $password = $_POST["password"];
     $confirm_password = $_POST["confirm_password"];
-    $user_type = $_POST["user_type"]; // New field for user type
+    $user_type = $_POST["user_type"];
+    $contact_number = $_POST["contact_number"];
 
     // Validate form data (e.g., check if passwords match, etc.)
     if ($password !== $confirm_password) {
@@ -35,18 +36,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Insert new user into the database
-    $sql = "INSERT INTO users (username, email, password, user_type) VALUES (:username, :email, :password, :user_type)";
+    $sql = "INSERT INTO users (username, email, password, user_type, contact_number) VALUES (:username, :email, :password, :user_type, :contact_number)";
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(":username", $username);
     $stmt->bindParam(":email", $email);
     $stmt->bindParam(":password", $password); // Store password as provided by the user
     $stmt->bindParam(":user_type", $user_type); // Bind user_type parameter
+    $stmt->bindParam(":contact_number", $contact_number); // Bind contact_number parameter
     $stmt->execute();
 
     // Show success message using JavaScript alert
     echo "<script>alert('Signup successful!');</script>";
     echo "<script>window.location.href = 'login_signup.html';</script>";
     exit();
+
 }
 
 // Redirect to login page if accessed directly

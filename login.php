@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($_SESSION["user_type"] == "admin") {
                 // Redirect to admin.html if user is admin
                 echo "<script>alert('Admin logged in');</script>";
-                echo "<script>window.location.href = 'admin_dashboard.html';</script>";
+                echo "<script>window.location.href = 'admin_dashboard.php';</script>";
                 exit();
             } else {
                 // Redirect to User.html if user is not admin
