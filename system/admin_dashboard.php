@@ -158,12 +158,12 @@
             <div class="section">
                 <h2>Customer</h2>
                 <p>Total Customers: <span id="customerCountPlaceholder2"></span></p>
-                <button onclick="window.location.href='Customer_management.php'">Manage Customer</button>
+                <button onclick="window.location.href='manage_customer.php'">Manage Customer</button>
             </div>
             <div class="section">
                 <h2>Route</h2>
                 <p>Total Routes: <span id="routeCountPlaceholder2"></p>
-                <button onclick="window.location.href='route_management.php'">Manage Route</button>
+                <button onclick="window.location.href='manage_route.php'">Manage Route</button>
             </div>
             <div class="section">
                 <h2>Bookings</h2>

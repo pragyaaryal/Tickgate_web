@@ -4,18 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Management</title>
+    <title>Route Management</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            padding: 60px 0px;
+            padding: 0;
             margin: 0;
+            background-color: #f9f8f8;
         }
 
         .navbar {
             position: fixed;
             top: 0;
-            /* Ensure navbar stays at the top of the screen */
             left: 0;
             width: 100%;
             background-color: #2A2D3A;
@@ -54,17 +54,20 @@
         table {
             border-collapse: collapse;
             width: 100%;
+            margin-top: 70px;
+            /* Adjusted to make space for fixed navbar */
         }
 
         th,
         td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 10px;
             text-align: left;
         }
 
         th {
-            background-color: #f2f2f2;
+            background-color: #2A2D3A;
+            color: #fff;
         }
 
         tr:nth-child(even) {
@@ -89,7 +92,7 @@
             background-color: #45a049;
         }
 
-        .customer-form {
+        .route-form {
             margin-top: 20px;
             padding: 20px;
             border: 1px solid #ddd;
@@ -97,9 +100,11 @@
             background-color: #f5f5f5;
         }
 
-        .customer-form input[type="text"],
-        .customer-form input[type="number"],
-        .customer-form input[type="tel"] {
+        .route-form input[type="text"],
+        .route-form input[type="number"],
+        .route-form input[type="tel"],
+        .route-form input[type="date"] {
+            /* Added input type for date */
             width: calc(100% - 20px);
             padding: 10px;
             margin-bottom: 10px;
@@ -107,7 +112,7 @@
             border-radius: 3px;
         }
 
-        .customer-form input[type="submit"] {
+        .route-form input[type="submit"] {
             background-color: #4CAF50;
             color: #fff;
             border: none;
@@ -116,12 +121,15 @@
             cursor: pointer;
         }
 
-        .customer-form input[type="submit"]:hover {
+        .route-form input[type="submit"]:hover {
             background-color: #45a049;
         }
 
         h1 {
+            margin-top: 90px;
+            margin-bottom: 20px;
             text-align: center;
+            /* Added text alignment */
         }
     </style>
 </head>
@@ -133,42 +141,54 @@
         <a class="logout" href="login_signup.html">Logout</a>
     </div>
 
-    <h1>Customer Management</h1>
+    <h1>Route Management</h1>
 
-    <!-- Table to display customer data -->
     <table>
         <thead>
             <tr>
-                <th>Username</th>
-                <th>User ID</th>
-                <th>Email</th>
-                <th>Password</th>
-                <th>Created At</th>
-                <th>User Type</th>
-                <th>Contact Number</th>
+                <th>Route Id</th>
+                <th>Starting Point</th>
+                <th>Dropping Point</th>
+                <th>Departure Date</th>
+                <th>Departure Time</th>
+                <th>Driver Contact</th>
+                <th>Bus Number</th>
                 <th>Action</th>
             </tr>
         </thead>
-        <tbody id="userTableBody">
-            <!-- Customer data will be populated here -->
+        <tbody id="routeTableBody">
+            <!-- Routes will be dynamically added here -->
         </tbody>
     </table>
 
-
+    <!-- Route Form -->
+    <div class="route-form">
+        <h2>Add Route</h2>
+        <form id="addRouteForm" method="post" action="add_route.php">
+            <input type="text" name="RouteID" placeholder="RouteID" required><br>
+            <input type="text" name="startingPoint" placeholder="Starting Point" required><br>
+            <input type="text" name="droppingPoint" placeholder="Dropping Point" required><br>
+            <input type="date" name="departureDate" placeholder="Departure Date" required><br>
+            <input type="text" name="departureTime" placeholder="Departure Time" required><br>
+            <input type="text" name="busNumber" placeholder="Bus Number" required><br>
+            <input type="tel" name="driverContact" placeholder="Driver Contact" required><br>
+            <input type="submit" name="submit" value="Add Route">
+        </form>
+    </div>
 
     <?php
     // Include the database connection file
     include 'db_connection.php';
 
     // Query to fetch customer information from the users table
-    $query = "SELECT username, user_id, email, password, created_at, user_type, contact_number FROM users WHERE user_type = 'customer'";
+    $query = "SELECT RouteID, FromLocation, Destination, DepartureDate, DepartureTime, ContactNumber, BusNumber FROM Route";
     $result = $conn->query($query); // Using PDO query() method instead of mysqli_query()
     
     if ($result) {
         // Check if there are any rows returned
         if ($result->rowCount() > 0) {
             // Fetch all rows as associative arrays
-            $userData = $result->fetchAll(PDO::FETCH_ASSOC);
+            $routeData = $result->fetchAll(PDO::FETCH_ASSOC);
         } else {
             echo "No customers found in the database.";
             exit; // Exit PHP script if no customers found
@@ -188,93 +208,47 @@
 
     <script>
         // Initialize the userData variable with PHP data
-        const userData = <?php echo json_encode($userData); ?>;
+        const routeData = <?php echo json_encode($routeData); ?>;
 
         // Function to populate the table with customer data
         function populateTable() {
-            const userTableBody = document.getElementById('userTableBody');
+            const routeTableBody = document.getElementById('routeTableBody');
 
-            userData.forEach(user => {
+            routeData.forEach(Route => {
                 const row = document.createElement('tr');
-                row.setAttribute('data-id', user.user_id);
+                row.setAttribute('data-id', Route.RouteID);
+
                 row.innerHTML = `
-                <td>${user.username}</td>
-                <td>${user.user_id}</td>
-                <td>${user.email}</td>
-                <td>${user.password}</td>
-                <td>${user.created_at}</td>
-                <td>${user.user_type}</td>
-                <td>${user.contact_number}</td>
+                <td>${Route.RouteID}</td>
+                <td>${Route.FromLocation}</td>
+                <td>${Route.Destination}</td>
+                <td>${Route.DepartureDate}</td>
+                <td>${Route.DepartureTime}</td>
+                <td>${Route.ContactNumber}</td>
+                <td>${Route.BusNumber}</td>
                 <td>
-                    <button class="edit-btn btn" data-id="${user.user_id}">Edit</button>
-                    <button class="delete-btn btn" data-id="${user.user_id}">Delete</button>
+                    <button class="edit-btn btn" data-id="${Route.RouteID}">Edit</button>
+                    <button class="delete-btn btn" data-id="${Route.RouteID}">Delete</button>
                 </td>
             `;
-                userTableBody.appendChild(row);
+                routeTableBody.appendChild(row);
+
             });
-        }
-
-        // Function to handle editing a user
-        function editUser(userId) {
-            const row = document.querySelector(`tr[data-id="${userId}"]`);
-            const user = userData.find(user => user.user_id === userId);
-            if (!row || !user) return;
-
-            const cells = row.querySelectorAll('td');
-
-            cells.forEach(cell => {
-                const originalContent = cell.textContent.trim();
-                cell.innerHTML = `<input type="text" value="${originalContent}">`;
+            // Add event listeners to delete buttons
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const RouteID = btn.getAttribute('data-id');
+                if (confirm(`Are you sure you want to remove this Route ${RouteID}?`)) {
+                    window.location.href = `delete_route.php?RouteID=${RouteID}`;
+                }
             });
-        }
-
-        // Function to handle saving edited user data
-        function saveUser(userId) {
-            const row = document.querySelector(`tr[data-id="${userId}"]`);
-            const user = userData.find(user => user.user_id === userId);
-            if (!row || !user) return;
-
-            const cells = row.querySelectorAll('td');
-
-            cells.forEach(cell => {
-                const input = cell.querySelector('input');
-                user[cell.cellIndex] = input.value.trim();
-                cell.textContent = input.value.trim();
-            });
-        }
-
-        // Function to handle deleting a user
-        function deleteUser(userId) {
-            // Code to delete user from database
-            const row = document.querySelector(`tr[data-id="${userId}"]`);
-            if (row) {
-                row.remove();
-            }
-        }
-
-        // Event listener to handle button clicks
-        document.addEventListener('click', function (event) {
-            const target = event.target;
-
-            if (target.classList.contains('edit-btn')) {
-                const userId = target.getAttribute('data-id');
-                editUser(userId);
-            }
-
-            if (target.classList.contains('save-btn')) {
-                const userId = target.getAttribute('data-id');
-                saveUser(userId);
-            }
-
-            if (target.classList.contains('delete-btn')) {
-                const userId = target.getAttribute('data-id');
-                deleteUser(userId);
-            }
         });
 
+        }
         // Populate the table when the page loads
         populateTable();
     </script>
+
 
 
 </body>
