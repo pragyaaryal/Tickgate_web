@@ -1,36 +1,38 @@
 <?php
-include 'db_connection.php';
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-// Create an associative array to hold the response data
-$response = array();
+// Include the database connection file
+require_once 'db_connection.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Retrieve email and new password from form
+    // Get email and new password from the form
     $email = $_POST["email"];
-    $newPassword = $_POST["password"];
+    $new_password = $_POST["new_password"];
 
-    // Hash the new password
-    $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+    try {
+        // Prepare SQL statement to prevent SQL injection
+        $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+        $stmt->execute([$email]);
+        $result = $stmt->fetchAll();
 
-    // Update the user's password in the database
-    $updateQuery = "UPDATE Users SET password = ? WHERE email = ?";
-    $stmt = mysqli_prepare($connection, $updateQuery);
-    mysqli_stmt_bind_param($stmt, "ss", $hashedPassword, $email);
-    mysqli_stmt_execute($stmt);
+        if (count($result) > 0) {
+            // Email exists, update the password
+            $update_stmt = $conn->prepare("UPDATE users SET password = ? WHERE email = ?");
+            $update_stmt->execute([$new_password, $email]);
 
-    // Check if the update was successful
-    if (mysqli_stmt_affected_rows($stmt) > 0) {
-        // Password updated successfully
-        $response["success"] = true;
-        $response["message"] = "Password updated successfully.";
-    } else {
-        // Email not found or password update failed
-        $response["success"] = false;
-        $response["message"] = "Error updating password. Please try again.";
+            echo "<script>alert('Password updated successfully.');</script>";
+            echo "<script>window.location.href = 'login_signup.html';</script>";
+            exit();
+        } else {
+            echo "<script>alert('Email not found.');</script>";
+            echo "<script>window.location.href = 'forgot_password.html';</script>";
+        }
+    } catch (PDOException $e) {
+        echo "<script>alert('Error: " . $e->getMessage() . "');</script>";
+        echo "<script>window.location.href = 'forgot_password.html';</script>";
     }
 }
 
-// Send the response as JSON
-header("Content-type: application/json");
-echo json_encode($response);
+$conn = null; // Close connection
 ?>
