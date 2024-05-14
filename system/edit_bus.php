@@ -1,6 +1,4 @@
 <?php
-
-// Include the database connection file
 include 'db_connection.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -9,16 +7,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $busType = $_POST['busType'];
     $numberOfSeats = $_POST['numberOfSeats'];
     $bookedSeats = $_POST['bookedSeats'];
+    // Calculate FreeSeats
+    $freeSeats = $numberOfSeats - $bookedSeats;
 
-    // Update the record in the database
-    $sql = "UPDATE bus SET BusType='$busType', NumberOfSeats='$numberOfSeats', BookedSeats='$bookedSeats' WHERE BusNumber='$busNumber'";
+    // Update the record in the database using prepared statement
+    $sql = "UPDATE bus SET BusType=?, NumberOfSeats=?, BookedSeats=?, FreeSeats=? WHERE BusNumber=?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("siiis", $busType, $numberOfSeats, $bookedSeats, $freeSeats, $busNumber);
 
-    if ($conn->query($sql) === TRUE) {
+    if ($stmt->execute()) {
         // Redirect back to the page after update
-        header("Location: admin_dashboard.php");
+        header("Location: manage_bus.php");
         exit();
     } else {
-        echo "Error updating record: " . $conn->error;
+        echo "Error updating record: " . $stmt->error;
     }
 }
 

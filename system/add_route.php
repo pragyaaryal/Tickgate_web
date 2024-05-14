@@ -20,7 +20,7 @@ if(isset($_POST['submit'])) {
 
     // Check if the insertion was successful
     if($stmt->rowCount() > 0) {
-        echo "Route added successfully.";
+        echo "<script>alert(`Route added successfully`);</script>" ;
         echo "<script>window.location.href = 'route_management.php';</script>";
 
     } else {
