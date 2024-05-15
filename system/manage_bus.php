@@ -141,6 +141,7 @@
                 <tr>
                     <th>Bus Number</th>
                     <th>Bus Type</th>
+                    <th>Contact Number</th>
                     <th>Number of Seats</th>
                     <th>Booked Seats</th>
                     <th>Free Seats</th>
@@ -158,6 +159,7 @@
             <form id="addBusForm" method="post" action="add_bus.php">
                 <input type="text" name="busNumber" placeholder="Bus Number" required><br>
                 <input type="text" name="busType" placeholder="Bus Type" required><br>
+                <input type="text" name="contactNumber" placeholder="Contact Number" required><br>
                 <input type="text" name="numberOfSeats" id="numberOfSeats" placeholder="Number of Seats" required><br>
                 <input type="text" name="bookedSeats" id="bookedSeats" placeholder="Booked Seats" required><br>
                 <!-- Add the readonly attribute for the Free Seats input -->
@@ -182,6 +184,7 @@
                     row.innerHTML = `
                         <td>${bus.BusNumber}</td>
                         <td>${bus.BusType}</td>
+                        <td>${bus.ContactNumber}</td>
                         <td>${bus.NumberOfSeats}</td>
                         <td>${bus.BookedSeats}</td>
                         <td>${bus.FreeSeats}</td>
@@ -211,9 +214,10 @@
                         const cells = row.querySelectorAll('td');
 
                         // Display editable fields
-                        cells[1].innerHTML = `<input type="text" name="busType" value="${cells[1].textContent}">`;
-                        cells[2].innerHTML = `<input type="text" name="numberOfSeats" value="${cells[2].textContent}">`;
-                        cells[3].innerHTML = `<input type="text" name="bookedSeats" value="${cells[3].textContent}">`;
+                        cells[1].innerHTML = `<input type="text" name="contactNumber" value="${cells[1].textContent}">`;
+                        cells[2].innerHTML = `<input type="text" name="busType" value="${cells[2].textContent}">`;
+                        cells[3].innerHTML = `<input type="text" name="numberOfSeats" value="${cells[3].textContent}">`;
+                        cells[4].innerHTML = `<input type="text" name="bookedSeats" value="${cells[4].textContent}">`;
 
                         // Replace edit button with save and cancel buttons
                         cells[5].innerHTML = `
@@ -225,6 +229,7 @@
                         row.querySelector('.saveBtn').addEventListener('click', () => {
                             const editedData = {
                                 busNumber: busNumber,
+                                contactNumber: row.querySelector('input[name="contactNumber"]').value,
                                 busType: row.querySelector('input[name="busType"]').value,
                                 numberOfSeats: row.querySelector('input[name="numberOfSeats"]').value,
                                 bookedSeats: row.querySelector('input[name="bookedSeats"]').value

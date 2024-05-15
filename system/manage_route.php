@@ -151,8 +151,8 @@
                 <th>Dropping Point</th>
                 <th>Departure Date</th>
                 <th>Departure Time</th>
-                <th>Driver Contact</th>
                 <th>Bus Number</th>
+                <th>Ticket Price</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -171,7 +171,8 @@
             <input type="date" name="departureDate" placeholder="Departure Date" required><br>
             <input type="text" name="departureTime" placeholder="Departure Time" required><br>
             <input type="text" name="busNumber" placeholder="Bus Number" required><br>
-            <input type="tel" name="driverContact" placeholder="Driver Contact" required><br>
+            <input type="text" name="ticketPrice" placeholder="ticketPrice" required><br>
+
             <input type="submit" name="submit" value="Add Route">
         </form>
     </div>
@@ -181,7 +182,7 @@
     include 'db_connection.php';
 
     // Query to fetch customer information from the users table
-    $query = "SELECT RouteID, FromLocation, Destination, DepartureDate, DepartureTime, ContactNumber, BusNumber FROM Route";
+    $query = "SELECT RouteID, FromLocation, Destination, DepartureDate, DepartureTime, BusNumber, TicketPrice FROM Route";
     $result = $conn->query($query); // Using PDO query() method instead of mysqli_query()
     
     if ($result) {
@@ -224,8 +225,8 @@
                 <td>${Route.Destination}</td>
                 <td>${Route.DepartureDate}</td>
                 <td>${Route.DepartureTime}</td>
-                <td>${Route.ContactNumber}</td>
                 <td>${Route.BusNumber}</td>
+                <td>${Route.TicketPrice}</td>
                 <td>
                     <button class="edit-btn btn" data-id="${Route.RouteID}">Edit</button>
                     <button class="delete-btn btn" data-id="${Route.RouteID}">Delete</button>
@@ -235,7 +236,7 @@
 
             });
             // Add event listeners to delete buttons
-        document.querySelectorAll('.delete-btn').forEach(btn => {
+            document.querySelectorAll('.delete-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const RouteID = btn.getAttribute('data-id');
                 if (confirm(`Are you sure you want to remove this Route ${RouteID}?`)) {

@@ -11,20 +11,25 @@ if(isset($_POST['submit'])) {
     $departureDate = $_POST['departureDate'];
     $departureTime = $_POST['departureTime'];
     $busNumber = $_POST['busNumber'];
-    $driverContact = $_POST['driverContact'];
+    $ticketPrice = $_POST['ticketPrice'];
 
-    // Prepare and execute SQL statement to insert data into the database
-    $query = "INSERT INTO Route (RouteID, FromLocation, Destination, DepartureDate, DepartureTime, ContactNumber, BusNumber) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    $stmt = $conn->prepare($query);
-    $stmt->execute([$routeID, $startingPoint, $droppingPoint, $departureDate, $departureTime, $driverContact, $busNumber]);
+    try {
+        // Prepare and execute SQL statement to insert data into the database
+        $query = "INSERT INTO Route (RouteID, FromLocation, Destination, DepartureDate, DepartureTime, TicketPrice, BusNumber) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($query);
+        $stmt->execute([$routeID, $startingPoint, $droppingPoint, $departureDate, $departureTime, $ticketPrice, $busNumber]);
 
-    // Check if the insertion was successful
-    if($stmt->rowCount() > 0) {
-        echo "<script>alert(`Route added successfully`);</script>" ;
-        echo "<script>window.location.href = 'route_management.php';</script>";
-
-    } else {
-        echo "Error adding route.";
+        // Check if the insertion was successful
+        if($stmt->rowCount() > 0) {
+            echo "<script>alert('Route added successfully');</script>" ;
+            echo "<script>window.location.href = 'manage_route.php';</script>";
+        } else {
+            echo "<script>alert('Error adding route');</script>";
+        }
+    } catch (PDOException $e) {
+        // Handle database errors
+        // echo "Error: " . $e->getMessage();
+        echo "<script>alert('The bus Number doesnt exist.');</script>" ;
     }
 }
 

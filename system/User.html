@@ -66,24 +66,26 @@
   </nav>
 
   <div class="Homescreen">
+    <!-- when the user enter from, to and day and date info check all the available data in the table route that matches the information and display them as searched results below -->
     <div class="Bus_Search">
-      <!-- when the user enter from, to and day and date info check all the available data in the table route that matches the information and display them as searched results below -->
-      
-      <div class="from">
-        <input type="text" name="value" id="from" placeholder="From">
-        <i class="fa-solid fa-bus"></i>
-      </div>
+      <!-- Form for search -->
+      <form method="POST" action="fetch_search_results.php">
+        <div class="from">
+          <input type="text" name="from" id="from" placeholder="From" required>
+          <i class="fa-solid fa-bus"></i>
+        </div>
+        <div class="to">
+          <input type="text" name="to" id="to" placeholder="To" required>
+          <i class="fa-solid fa-location-dot"></i>
+        </div>
+        <div class="date">
+          <input type="date" name="date" id="date" placeholder="day_and_date" required>
+        </div>
+        <input class="Search" type="submit" name="search" value="Search">
+      </form>
+    </div>
 
-      <div class="to">
-        <input type="text" name="value" id="to" placeholder="To">
-        <i class="fa-solid fa-location-dot"></i>
-      </div>
-
-      <div class="date">
-        <input type="date" name="value" id="date" placeholder="day_and_date">
-      </div>
-
-      <!-- <div class="bus_type">
+    <!-- <div class="bus_type">
         <label for="Bus">Choose your bus type:</label>
         <select name="bus" id="bus">
           <optgroup label="Bus types">
@@ -93,8 +95,7 @@
           </optgroup>
         </select>
       </div> -->
-      <input class="Search" type="submit" value="Search">
-    </div>
+  </div>
   </div>
   <div class="SearchedResults">
     <!-- According to the from, to and dayanddate info above in the search bar the route id can be fetched and can access Route table which will help fetch BusNumber  -->
@@ -122,7 +123,7 @@
           <label for="numbeofseatsreserved">Book Seats</label>
           <select name="numbeofseatsreserved" id="numbeofseatsreserved" aria-placeholder="Number of Seats">
             <!-- show option acording to the free seats fetched -->
-            <option value="1">1 Seat</option> 
+            <option value="1">1 Seat</option>
             <option value="2">2 Seats</option>
             <option value="3">3 Seats</option>
             <option value="4">4 Seats</option>
@@ -158,7 +159,8 @@
       <i class="fa fa-chevron-down"></i>
     </div>
     <div id="Answer2" class="Answer">
-      Yes, to utilize the services offered by TickGate, registration is required. Creating an account allows you to access various features and benefits provided by the platform.
+      Yes, to utilize the services offered by TickGate, registration is required. Creating an account allows you to
+      access various features and benefits provided by the platform.
     </div>
 
     <div class="Question" onclick="toggleAnswer('Answer3')">
@@ -166,7 +168,8 @@
       <i class="fa fa-chevron-down"></i>
     </div>
     <div id="Answer3" class="Answer">
-      Upon successful completion of your booking on TickGate, you will await your status once its approved you'll be able to generate ticket.
+      Upon successful completion of your booking on TickGate, you will await your status once its approved you'll be
+      able to generate ticket.
     </div>
 
     <div class="Question" onclick="toggleAnswer('Answer4')">
