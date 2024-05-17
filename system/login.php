@@ -38,13 +38,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } else {
                 // Redirect to User.html if user is not admin
                 echo "<script>alert('User logged in');</script>";
-                echo "<script>window.location.href = 'User.html';</script>";
+                echo "<script>window.location.href = 'user_dashboard.php';</script>";
                 exit();
             }
         } else {
             // Invalid credentials, display error message
             echo "<script>alert('Invalid email, password, or user type');</script>";
-            echo "<script>window.location.href = 'login_signup.html';</script>";
+            echo "<script>window.location.href = 'user_dashboard.php';</script>";
             exit();
         }
     }
