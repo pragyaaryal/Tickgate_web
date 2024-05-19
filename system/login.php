@@ -44,7 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             // Invalid credentials, display error message
             echo "<script>alert('Invalid email, password, or user type');</script>";
-            echo "<script>window.location.href = 'user_dashboard.php';</script>";
+            echo "<script>window.location.href = 'login_signup.html';</script>";
             exit();
         }
     }
