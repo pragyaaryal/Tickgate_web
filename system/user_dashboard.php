@@ -40,7 +40,7 @@
         </li>
 
         <li class="profile-dropdown-list-item">
-          <a href="#">
+          <a href="setting.html" target="_blank">
             <i class="fa-solid fa-sliders"></i>
             Settings
           </a>
@@ -48,7 +48,6 @@
 
         <li class="profile-dropdown-list-item">
           <a href="support.html" target="_blank">
-
             <i class="fa-regular fa-circle-question"></i>
             Help & Support
           </a>

@@ -143,75 +143,115 @@
             <h2 id="currentDateTime"></h2>
             <div class="todaysinfo">
                 <h2>Today's Information</h2>
-                <p>No of Buses: <span id="busCountPlaceholder1"></span></p>
-                <p>No of Customer: <span id="customerCountPlaceholder1"></p>
-                <p>No of Route:<span id="routeCountPlaceholder1"></p> </span></p>
-                <p>No of Bookings:<span id="bookingCountPlaceholder1"></p> </span></p>
+                <p>No of Buses on route today: <span id="todaybusCountPlaceholder"></span></p>
+                <p>No of Customer travelling: <span id="todaycustomerCountPlaceholder"></p>
+                <p>No of Route being travelled:<span id="todayrouteCountPlaceholder"></p> </span></p>
+                <p>No of Bookings Today:<span id="todaybookingCountPlaceholder">
             </div>
+
         </div>
         <div class="sections-container">
             <div class="section">
                 <h2>Bus</h2>
-                <p>Total Buses: <span id="busCountPlaceholder2"></span></p>
+                <p>Total Buses: <span id="totalbusCountPlaceholder"></span></p>
                 <button onclick="window.location.href='manage_bus.php'">Manage Bus</button>
             </div>
             <div class="section">
                 <h2>Customer</h2>
-                <p>Total Customers: <span id="customerCountPlaceholder2"></span></p>
+                <p>Total Customers: <span id="totalcustomerCountPlaceholder"></span></p>
                 <button onclick="window.location.href='manage_customer.php'">Manage Customer</button>
             </div>
             <div class="section">
                 <h2>Route</h2>
-                <p>Total Routes: <span id="routeCountPlaceholder2"></p>
+                <p>Total Routes: <span id="totalrouteCountPlaceholder"></p>
                 <button onclick="window.location.href='manage_route.php'">Manage Route</button>
             </div>
             <div class="section">
                 <h2>Bookings</h2>
-                <p>Total bookings: <span id="bookingCountPlaceholder2"></p>
+                <p>Total bookings: <span id="totalbookingCountPlaceholder"></p>
                 <button onclick="window.location.href='manage_bookings.php'">Manage Bookings</button>
             </div>
         </div>
     </div>
 
     <script>
-        // JavaScript to fetch and display the number of customers (users) from the server
-        fetch('get_customer_count.php')
+        // JavaScript to fetch and display the today's number of customers (users) from the server
+        fetch('get_today_customer_count.php')
             .then(response => response.text())
             .then(data => {
                 // Update the total number of customers in the DOM
-                document.getElementById('customerCountPlaceholder1').textContent = data;
-                document.getElementById('customerCountPlaceholder2').textContent = data;
+                document.getElementById('todaycustomerCountPlaceholder').textContent = data;
             })
             .catch(error => console.error('Error:', error));
 
-        // JavaScript to fetch and display the bus count
-        fetch('get_bus_count.php')
+        // JavaScript to fetch and display the total number of customers (users) from the server
+        fetch('get_total_customer_count.php')
             .then(response => response.text())
             .then(data => {
-                document.getElementById('busCountPlaceholder1').textContent = data;
-                document.getElementById('busCountPlaceholder2').textContent = data;
+                // Update the total number of customers in the DOM
+                document.getElementById('totalcustomerCountPlaceholder').textContent = data;
             })
             .catch(error => console.error('Error:', error));
+
+        
+
+        // JavaScript to fetch and display today's bus count
+        fetch('get_today_bus_count.php')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('todaybusCountPlaceholder').textContent = data;
+            })
+            .catch(error => console.error('Error:', error));
+
+        // JavaScript to fetch and display total number of the bus count
+        fetch('get_total_bus_count.php')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('totalbusCountPlaceholder').textContent = data;
+            })
+            .catch(error => console.error('Error:', error));
+
 
         // JavaScript to fetch and display the number of routes from the server
-        fetch('get_route_count.php')
+        fetch('get_today_route_count.php')
             .then(response => response.text())
             .then(data => {
                 // Update the total number of customers in the DOM
-                document.getElementById('routeCountPlaceholder1').textContent = data;
-                document.getElementById('routeCountPlaceholder2').textContent = data;
+                document.getElementById('todayrouteCountPlaceholder').textContent = data;
             })
             .catch(error => console.error('Error:', error));
 
-        // JavaScript to fetch and display the number of routes from the server
-        fetch('get_booking_count.php')
+         // JavaScript to fetch and display the number of routes from the server
+        fetch('get_total_route_count.php')
             .then(response => response.text())
             .then(data => {
                 // Update the total number of customers in the DOM
-                document.getElementById('bookingCountPlaceholder1').textContent = data;
-                document.getElementById('bookingCountPlaceholder2').textContent = data;
+                document.getElementById('totalrouteCountPlaceholder').textContent = data;
             })
             .catch(error => console.error('Error:', error));
+
+        
+        
+        // JavaScript to fetch and display the today's number of bookings from the server
+        fetch('get_today_booking_count.php')
+            .then(response => response.text())
+            .then(data => {
+                // Update the total number of customers in the DOM
+                document.getElementById('todaybookingCountPlaceholder').textContent = data;
+                // document.getElementById('bookingCountPlaceholder2').textContent = data;
+            })
+            .catch(error => console.error('Error:', error));
+        
+        // JavaScript to fetch and display the total number of bookings from the server
+        fetch('get_total_booking_count.php')
+            .then(response => response.text())
+            .then(data => {
+                // Update the total number of customers in the DOM
+                document.getElementById('totalbookingCountPlaceholder').textContent = data;
+                // document.getElementById('bookingCountPlaceholder2').textContent = data;
+            })
+            .catch(error => console.error('Error:', error));
+
 
 
 
