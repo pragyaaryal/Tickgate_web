@@ -236,7 +236,20 @@ input[type=submit]:hover {
 
 
 /* Searched results*/
-.SearchedResults {
+
+.SuggestedBookings {
+  width: 60%;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: var(--primary);
+}
+.suggestedResultsContainer{
+  width: 100px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: var(--primary);
+}
+.SearchedResults{
   width: 80%;
   margin: 0 auto;
   padding: 20px;

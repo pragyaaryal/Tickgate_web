@@ -212,6 +212,7 @@
                     </td>
                     <td>
                         <select class="status-select" onchange="changeStatus(this)">
+                            <option value="" disabled selected>Change booking status</option>
                             <option value="pending">Pending</option>
                             <option value="approved">Approved</option>
                         </select>

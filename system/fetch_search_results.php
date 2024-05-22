@@ -11,25 +11,39 @@ try {
     // Debugging statements
     error_log("From: $from, To: $to, Date: $date");
 
-    // Validate input
-    if (empty($from) || empty($to) || empty($date)) {
-        throw new Exception('Invalid input');
+    if (empty($from) && empty($to) && empty($date)) {
+        // Fetch 3 suggested bookings
+        $query = "SELECT r.RouteID, r.DepartureDate, r.DepartureTime, r.FromLocation, r.Destination, b.BusNumber, b.BusType, b.FreeSeats, b.ContactNumber
+                  FROM Route r
+                  INNER JOIN Bus b ON b.BusNumber = r.BusNumber
+                  WHERE r.DepartureDate >= CURDATE()
+                  ORDER BY RAND()
+                  LIMIT 3";
+
+        $stmt = $conn->prepare($query);
+        $stmt->execute();
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } else {
+        // Validate input
+        if (empty($from) || empty($to) || empty($date)) {
+            throw new Exception('Invalid input');
+        }
+
+        // Prepare and execute the query
+        $query = "SELECT r.RouteID, r.DepartureDate, r.DepartureTime, r.FromLocation, r.Destination, b.BusNumber, b.BusType, b.FreeSeats, b.ContactNumber
+                  FROM Route r
+                  INNER JOIN Bus b ON b.BusNumber = r.BusNumber
+                  WHERE r.FromLocation = :from AND r.Destination = :to AND r.DepartureDate = :date";
+
+        $stmt = $conn->prepare($query);
+        $stmt->execute([
+            ':from' => $from,
+            ':to' => $to,
+            ':date' => $date
+        ]);
+
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
-    // Prepare and execute the query
-    $query = "SELECT r.RouteID, r.DepartureDate, r.DepartureTime, r.FromLocation, r.Destination, b.BusNumber, b.BusType, b.FreeSeats, b.ContactNumber
-              FROM Route r
-              INNER JOIN Bus b ON b.BusNumber = r.BusNumber
-              WHERE r.FromLocation = :from AND r.Destination = :to AND r.DepartureDate = :date";
-
-    $stmt = $conn->prepare($query);
-    $stmt->execute([
-        ':from' => $from,
-        ':to' => $to,
-        ':date' => $date
-    ]);
-
-    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     echo json_encode($results);
 } catch (PDOException $e) {

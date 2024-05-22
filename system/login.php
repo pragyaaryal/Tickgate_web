@@ -21,32 +21,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->execute();
         $user = $stmt->fetch();
 
-        // Check if user exists and passwords match
         if ($user) {
-            // Start session and store user data
-            session_start();
-            $_SESSION["user_id"] = $user["user_id"];
+            // Store user data in session variables
+            $_SESSION["user_id"] = $user["user_id"]; // Updated key to "user_id"
             $_SESSION["username"] = $user["username"];
             $_SESSION["user_type"] = $user["user_type"];
-
+        
             // Redirect based on user type
             if ($_SESSION["user_type"] == "admin") {
-                // Redirect to admin.html if user is admin
+                // Redirect to admin_dashboard.php if user is admin
                 echo "<script>alert('Admin logged in');</script>";
                 echo "<script>window.location.href = 'admin_dashboard.php';</script>";
                 exit();
             } else {
-                // Redirect to User.html if user is not admin
+                // Redirect to user_dashboard.php if user is not admin
                 echo "<script>alert('User logged in');</script>";
                 echo "<script>window.location.href = 'user_dashboard.php';</script>";
                 exit();
             }
-        } else {
-            // Invalid credentials, display error message
-            echo "<script>alert('Invalid email, password, or user type');</script>";
-            echo "<script>window.location.href = 'login_signup.html';</script>";
-            exit();
-        }
-    }
+        }}
 }
 ?>
