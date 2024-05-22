@@ -3,7 +3,6 @@
 include 'db_connection.php';
 
 try {
-  
     // Retrieve search parameters
     $from = isset($_GET['from']) ? trim($_GET['from']) : '';
     $to = isset($_GET['to']) ? trim($_GET['to']) : '';
@@ -18,7 +17,7 @@ try {
     }
 
     // Prepare and execute the query
-    $query = "SELECT r.RouteID, r.DepartureDate, r.DepartureTime, r.FromLocation, r.Destination, r.ContactNumber, b.BusNumber, b.BusType, b.FreeSeats
+    $query = "SELECT r.RouteID, r.DepartureDate, r.DepartureTime, r.FromLocation, r.Destination, b.BusNumber, b.BusType, b.FreeSeats, b.ContactNumber
               FROM Route r
               INNER JOIN Bus b ON b.BusNumber = r.BusNumber
               WHERE r.FromLocation = :from AND r.Destination = :to AND r.DepartureDate = :date";

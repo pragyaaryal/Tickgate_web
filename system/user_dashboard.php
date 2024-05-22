@@ -83,37 +83,15 @@
       </form>
     </div>
   </div>
-
   <div class="SearchedResults">
     <h2>Search Results</h2>
     <div id="resultsContainer"></div>
-    <div class="ticket">
-                  <div class="ticket-info">
-                    <div class="date-time">
-                      <p><strong>Date:</strong> ${ticket.DepartureDate}</p>
-                      <p><strong>Time:</strong> ${ticket.DepartureTime}</p>
-                    </div>
-                    <div class="from-to">
-                      <p><strong>From:</strong> ${ticket.FromLocation}</p>
-                      <p><strong>To:</strong> ${ticket.Destination}</p>
-                      <p><strong>Driver Contact:</strong> ${ticket.ContactNumber}</p>
-                    </div>
-                    <div class="bus-details">
-                      <p><strong>Bus Number:</strong> ${ticket.BusNumber}</p>
-                      <p><strong>Bus Type:</strong> ${ticket.BusType}</p>
-                      <p><strong>Free Seats:</strong> ${ticket.FreeSeats}</p>
-                    </div>
-                    <<div class="bookingdetails">
-  <label for="numbeofseatsreserved_${ticket.RouteID}">Book Seats</label>
-  <select name="numbeofseatsreserved" id="numbeofseatsreserved_${ticket.RouteID}">
-    <!-- Options for selecting number of seats -->
-  </select>
-  <button class="book-button" data-routeid="${ticket.RouteID}" data-busnumber="${ticket.BusNumber}" data-from="${ticket.FromLocation}" data-to="${ticket.Destination}">Book Ticket</button>
-</div>
-
-                  </div>
-                </div>`;
   </div>
+  <!-- <div class="Suggested bookings">
+    <h2>Suggested bookings</h2>
+    <div id="resultsContainer"></div>
+  </div> -->
+
 
   <div class="FAQs">
     <h1>Frequently Asked Questions</h1>
@@ -198,7 +176,6 @@
       }
     }
 
-
     document.addEventListener('DOMContentLoaded', function () {
       const searchForm = document.getElementById('searchForm');
 
@@ -232,32 +209,31 @@
             data.forEach(ticket => {
               const seatOptions = Array.from({ length: ticket.FreeSeats }, (_, i) => `<option value="${i + 1}">${i + 1} Seat(s)</option>`).join('');
               const ticketHtml = `
-                <div class="ticket">
-                  <div class="ticket-info">
-                    <div class="date-time">
-                      <p><strong>Date:</strong> ${ticket.DepartureDate}</p>
-                      <p><strong>Time:</strong> ${ticket.DepartureTime}</p>
-                    </div>
-                    <div class="from-to">
-                      <p><strong>From:</strong> ${ticket.FromLocation}</p>
-                      <p><strong>To:</strong> ${ticket.Destination}</p>
-                      <p><strong>Driver Contact:</strong> ${ticket.ContactNumber}</p>
-                    </div>
-                    <div class="bus-details">
-                      <p><strong>Bus Number:</strong> ${ticket.BusNumber}</p>
-                      <p><strong>Bus Type:</strong> ${ticket.BusType}</p>
-                      <p><strong>Free Seats:</strong> ${ticket.FreeSeats}</p>
-                    </div>
-                    <<div class="bookingdetails">
-  <label for="numbeofseatsreserved_${ticket.RouteID}">Book Seats</label>
-  <select name="numbeofseatsreserved" id="numbeofseatsreserved_${ticket.RouteID}">
-    <!-- Options for selecting number of seats -->
-  </select>
-  <button class="book-button" data-routeid="${ticket.RouteID}" data-busnumber="${ticket.BusNumber}" data-from="${ticket.FromLocation}" data-to="${ticket.Destination}">Book Ticket</button>
-</div>
-
-                  </div>
-                </div>`;
+            <div class="ticket">
+              <div class="ticket-info">
+                <div class="date-time">
+                  <p><strong>Date:</strong> ${ticket.DepartureDate}</p>
+                  <p><strong>Time:</strong> ${ticket.DepartureTime}</p>
+                </div>
+                <div class="from-to">
+                  <p><strong>From:</strong> ${ticket.FromLocation}</p>
+                  <p><strong>To:</strong> ${ticket.Destination}</p>
+                  <p><strong>Driver Contact:</strong> ${ticket.ContactNumber}</p>
+                </div>
+                <div class="bus-details">
+                  <p><strong>Bus Number:</strong> ${ticket.BusNumber}</p>
+                  <p><strong>Bus Type:</strong> ${ticket.BusType}</p>
+                  <p><strong>Free Seats:</strong> ${ticket.FreeSeats}</p>
+                </div>
+                <div class="bookingdetails">
+                  <label for="numbeofseatsreserved_${ticket.RouteID}">Book Seats</label>
+                  <select name="numbeofseatsreserved" id="numbeofseatsreserved_${ticket.RouteID}">
+                    ${seatOptions}
+                  </select>
+                  <button class="book-button" data-routeid="${ticket.RouteID}" data-busnumber="${ticket.BusNumber}" data-from="${ticket.FromLocation}" data-to="${ticket.Destination}">Book Ticket</button>
+                </div>
+              </div>
+            </div>`;
 
               resultsContainer.innerHTML += ticketHtml;
             });
@@ -287,52 +263,7 @@
           .catch(error => console.error('Error:', error));
       });
     });
-
-    document.querySelectorAll('.book-button').forEach(button => {
-      button.addEventListener('click', function () {
-        const routeID = this.dataset.routeid;
-        const busNumber = this.dataset.busnumber;
-        const fromLocation = this.dataset.from;
-        const toLocation = this.dataset.to;
-        const numSeats = document.getElementById(`numbeofseatsreserved_${routeID}`).value;
-
-        // You can now handle the booking process using these values
-        console.log('Booking ticket:', {
-          routeID,
-          busNumber,
-          fromLocation,
-          toLocation,
-          numSeats
-        });
-
-        // Submit the booking details to the server via AJAX
-        const formData = new FormData();
-        formData.append('routeID', routeID);
-        formData.append('busNumber', busNumber);
-        formData.append('fromLocation', fromLocation);
-        formData.append('toLocation', toLocation);
-        formData.append('numSeats', numSeats);
-
-        fetch('book_ticket.php', {
-          method: 'POST',
-          body: formData
-        })
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Booking failed');
-            }
-            return response.json();
-          })
-          .then(data => {
-            // Handle booking success
-            console.log('Booking successful:', data);
-          })
-          .catch(error => {
-            // Handle booking error
-            console.error('Booking failed:', error);
-          });
-      });
-    });
+  </script>
 
 
   </script>
