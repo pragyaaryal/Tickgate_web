@@ -1,154 +1,146 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Bus Reservation</title>
-    <style>
-        :root {
-            --primary: #F9F8F8;
-            --secondary: #2A2D3A;
-            --green: #66A88C;
-            --secondary-light: #7FD1AE;
-            --secondary-light-2: #ADE1CA;
-            --white: #fff;
-            --black: #000000;
-            --shadow: 0px 2px 8px 0px var(--secondary-light);
-        }
-        body {
-            font-family: Arial, sans-serif;
-            background-color: var(--primary);
-            color: var(--black);
-            margin: 0;
-            padding: 0;
-        }
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            background-color: var(--white);
-            box-shadow: var(--shadow);
-        }
-        .navbar a {
-            text-decoration: none;
-            color: var(--secondary);
-            margin: 0 10px;
-        }
-        .navbar .logo {
-            font-weight: bold;
-            font-size: 24px;
-        }
-        .navbar .profile {
-            display: flex;
-            align-items: center;
-        }
-        .navbar .profile img {
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-        .container {
-            max-width: 1000px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: var(--white);
-            border-radius: 10px;
-            box-shadow: var(--shadow);
-        }
-        .reservation-details {
-            padding: 20px;
-            background-color: var(--white);
-            border: 1px solid var(--secondary-light);
-            border-radius: 10px;
-            box-shadow: var(--shadow);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .detail-item {
-            flex: 1 1 45%;
-            margin: 10px 0;
-        }
-        .detail-item p {
-            margin: 5px 0;
-        }
-        .detail-item strong {
-            color: var(--secondary);
-        }
-        .btn {
-            padding: 10px 20px;
-            background-color: var(--green);
-            color: var(--white);
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            display: block;
-            margin-top: 20px;
-        }
-        .btn:hover {
-            background-color: var(--secondary-light);
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="reservation.css" />
 </head>
+
 <body>
 
-<div class="navbar">
-    <div class="logo">TickGate</div>
-    <div class="nav-links">
-        <a href="#">Home</a>
-        <a href="#">Reservation</a>
-        <a href="#">FAQs</a>
-        <a href="#">Contact</a>
+    <nav class="navbar" style=" z-index: 3; position: fixed;">
+        <img src="logo.png" class="navbar-logo" alt="logo" />
+        <ul class="navbar-list">
+            <li><a href="user_dashboard.php">Home</a></li>
+            <li><a href="reservation.html" target="_blank">Reservation</a></li>
+            <li><a href="user_dashboard.php">FAQs</a></li>
+            <li><a href="user_dashboard.php">Contact</a></li>
+        </ul>
+
+        <div class="profile-dropdown">
+            <div onclick="toggle()" class="profile-dropdown-btn">
+                <div class="profile-img">
+                    <i class="fa-solid fa-circle"></i>
+                </div>
+
+                <span>Profile
+                    <i class="fa-solid fa-angle-down"></i>
+                </span>
+            </div>
+
+            <ul class="profile-dropdown-list">
+                <li class="profile-dropdown-list-item">
+                    <a href="#">
+                        <i class="fa-regular fa-user"></i>
+                        Edit Profile
+                    </a>
+                </li>
+
+                <li class="profile-dropdown-list-item">
+                    <a href="setting.html" target="_blank">
+                        <i class="fa-solid fa-sliders"></i>
+                        Settings
+                    </a>
+                </li>
+
+                <li class="profile-dropdown-list-item">
+                    <a href="support.html" target="_blank">
+                        <i class="fa-regular fa-circle-question"></i>
+                        Help & Support
+                    </a>
+                </li>
+                <hr />
+
+                <li class="profile-dropdown-list-item">
+                    <a href="login_signup.html">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                        Log out
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="BookedTicketsContainer" style="width: 80%; margin-left: 170px; margin-top: 200px;">
+        <div class="ticket" id="reservationDetails">
+            <!-- Reservation details will be dynamically loaded here -->
+        </div>
     </div>
-    <div class="profile">
-        <img src="https://via.placeholder.com/40" alt="Profile Image">
-        <a href="#">Profile</a>
-    </div>
-</div>
 
-<div class="container">
-    <div class="reservation-details" id="reservationDetails">
-        <div class="detail-item">
-            <p><strong>Date:</strong> <span id="date">May 15, 2024</span></p>
-            <p><strong>Time:</strong> <span id="time">10:00 AM</span></p>
-        </div>
-        <div class="detail-item">
-            <p><strong>From:</strong> <span id="from">City A</span></p>
-            <p><strong>To:</strong> <span id="to">City B</span></p>
-        </div>
-        <div class="detail-item">
-            <p><strong>Bus Number:</strong> <span id="busNumber">ABC123</span></p>
-            <p><strong>Bus Type:</strong> <span id="busType">Luxury</span></p>
-        </div>
-        <div class="detail-item">
-            <p><strong>Driver Contact:</strong> <span id="driverContact">123-456-7890</span></p>
-            <p><strong>Number of Seats:</strong> <span id="numberOfSeats">45</span></p>
-        </div>
-        <div class="detail-item">
-            <p><strong>Status:</strong> <span id="status">Approved</span></p>
-        </div>
-        <button class="btn" onclick="downloadPDF()">Download PDF</button>
-    </div>
-</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetchUserReservations();
+        });
 
-<script>
-    function downloadPDF() {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
+        function fetchUserReservations() {
+            fetch('fetch_user_reservation.php')
+                .then(response => response.json())
+                .then(reservations => displayReservations(reservations))
+                .catch(error => console.error('Error fetching reservations:', error));
+        }
 
-        doc.text("Bus Reservation Details", 20, 20);
-        doc.text(`Date: ${document.getElementById('date').innerText}`, 20, 30);
-        doc.text(`Time: ${document.getElementById('time').innerText}`, 20, 40);
-        doc.text(`From: ${document.getElementById('from').innerText}`, 20, 50);
-        doc.text(`To: ${document.getElementById('to').innerText}`, 20, 60);
-        doc.text(`Bus Number: ${document.getElementById('busNumber').innerText}`, 20, 70);
-        doc.text(`Bus Type: ${document.getElementById('busType').innerText}`, 20, 80);
-        doc.text(`Driver Contact: ${document.getElementById('driverContact').innerText}`, 20, 90);
-        doc.text(`Number of Seats: ${document.getElementById('numberOfSeats').innerText}`, 20, 100);
-        doc.text(`Status: ${document.getElementById('status').innerText}`, 20, 110);
+        function displayReservations(reservations) {
+            var reservationDetails = document.getElementById('reservationDetails');
+            reservationDetails.innerHTML = '';
 
-        doc.save("reservation-details.pdf");
-    }
-</script>
+            if (reservations.length > 0) {
+                reservations.forEach(function (reservation) {
+                    var ticketDiv = document.createElement('div');
+                    ticketDiv.classList.add('ticket-info');
+
+                    ticketDiv.innerHTML = `
+                <div class="date-time">
+                    <p><strong>Name:</strong> ${reservation['BusNumber']}</p>
+                    <p><strong>Date:</strong> ${reservation['DepartureDate']}</p>
+                    <p><strong>Time:</strong> ${reservation['DepartureTime']}</p>
+                </div>
+                <div class="from-to">
+                    <p><strong>From:</strong> ${reservation['FromLocation']}</p>
+                    <p><strong>To:</strong> ${reservation['Destination']}</p>
+                </div>
+                <div class="bus-details">
+                    <p><strong>Bus Number:</strong> ${reservation['BusNumber']}</p>
+                    <p><strong>Bus Type:</strong> ${reservation['BusType']}</p>
+                </div>
+                <div class="bookingdetails">
+                    <p><strong>Driver Contact:</strong> ${reservation['ContactNumber']}</p>
+                    <p><strong>Number of Seats reserved:</strong> ${reservation['NumberOfSeatsReserved']}</p>
+                </div>
+                <div class="status">
+                    <p><strong>Status:</strong> ${reservation['status']}</p>
+                </div>
+                <div class="downloadPDF">
+                    ${reservation['status'] === 'Approved' ? `<button class="btn" onclick="downloadPDF(${JSON.stringify(reservation)})">Download PDF</button>` : ''}
+                </div>
+            `;
+
+                    reservationDetails.appendChild(ticketDiv);
+                });
+            } else {
+                reservationDetails.innerHTML = '<p>No reservations found.</p>';
+            }
+        }
+
+        function downloadPDF(reservation) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.text("Bus Reservation Details", 20, 20);
+            doc.text(`Date: ${reservation['DepartureDate']}`, 20, 30);
+            doc.text(`Time: ${reservation['DepartureTime']}`, 20, 40);
+            doc.text(`From: ${reservation['FromLocation']}`, 20, 50);
+            doc.text(`To: ${reservation['Destination']}`, 20, 60);
+            doc.text(`Bus Number: ${reservation['BusNumber']}`, 20, 70);
+            doc.text(`Bus Type: ${reservation['BusType']}`, 20, 80);
+            doc.text(`Driver Contact: ${reservation['ContactNumber']}`, 20, 90);
+            doc.text(`Number of Seats: ${reservation['NumberOfSeatsReserved']}`, 20, 100);
+            doc.text(`Status: ${reservation['status']}`, 20, 110);
+
+            doc.save("reservation-details.pdf");
+        }
+    </script>
 </body>
+
 </html>

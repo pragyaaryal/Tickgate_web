@@ -14,10 +14,10 @@
   <nav class="navbar">
     <img src="logo.png" class="navbar-logo" alt="logo" />
     <ul class="navbar-list">
-      <li><a href="#">Home</a></li>
+      <li><a href="user_dashboard.php">Home</a></li>
       <li><a href="reservation.html" target="_blank">Reservation</a></li>
-      <li><a href="#">FAQs</a></li>
-      <li><a href="#">Contact</a></li>
+      <li><a href="#FAQs">FAQs</a></li>
+      <li><a href="#Contact">Contact</a></li>
     </ul>
 
     <div class="profile-dropdown">
