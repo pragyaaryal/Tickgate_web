@@ -1,11 +1,10 @@
 <?php
 // Include the database connection file
-include 'db_connection.php';
+require_once 'db_connection.php';
 
-// Check if busNumber is provided in the request
 if (isset($_GET['userId'])) {
-    // Get the bus number from the request
     $userId = $_GET['userId'];
+
     try {
         // Prepare and execute the delete query
         $query = "DELETE FROM users WHERE user_id = ?";
@@ -14,22 +13,18 @@ if (isset($_GET['userId'])) {
 
         // Check if the deletion was successful
         if ($stmt->rowCount() > 0) {
-            echo "<script>alert(`User removed successfully.`);</script>" ;
-            echo "<script>window.location.href = 'manage_customer.php';</script>";
-            exit();
+            echo json_encode(['success' => true]);
         } else {
-            echo "<script>alert(`Failed to remove User. User ID not found.`);</script>" ;
-            echo "<script>window.location.href = 'manage_customer.php';</script>";
+            echo json_encode(['success' => false, 'error' => 'Failed to remove user. User ID not found.']);
         }
     } catch (PDOException $e) {
         // Log the error and return an error message
-        error_log("Error deleting User: " . $e->getMessage());
-        echo "<script>alert(`Error deleting User. Please try again later.`);</script>" ;
-        echo "<script>window.location.href = 'manage_customer.php';</script>";
+        error_log("Error deleting user: " . $e->getMessage());
+        echo json_encode(['success' => false, 'error' => 'Error deleting user. The user has a reservation. Please try again later.']);
     }
 } else {
-    // If busNumber is not provided in the request, return an error message
-    echo "User ID not provided.";
+    // If userId is not provided in the request, return an error message
+    echo json_encode(['success' => false, 'error' => 'User ID not provided.']);
 }
 
 // Close the database connection

@@ -24,7 +24,7 @@ if (isset($_GET['busNumber'])) {
     } catch (PDOException $e) {
         // Log the error and return an error message
         error_log("Error deleting bus: " . $e->getMessage());
-        echo "<script>alert(`Error deleting bus. Please try again later.`);</script>" ;
+        echo "<script>alert(`Bus is in Route. Please try again later.`);</script>" ;
         echo "<script>window.location.href = 'manage_bus.php';</script>";
     }
 } else {

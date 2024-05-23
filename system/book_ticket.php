@@ -3,25 +3,52 @@
 include 'db_connection.php';
 
 try {
+    // Start the session
+    session_start();
+
+    // Check if the user is logged in
+    if (!isset($_SESSION['user_id'])) {
+        throw new Exception('User not logged in');
+    }
+
+    // Get the user ID from the session
+    $userID = $_SESSION['user_id'];
+
     // Get the JSON input from the request
     $input = json_decode(file_get_contents('php://input'), true);
+
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        throw new Exception('Invalid JSON');
+    }
+
+    // Check if input data is valid
+    if (!isset($input['routeID'], $input['busNumber'], $input['fromLocation'], $input['toLocation'], $input['numSeats'])) {
+        throw new Exception('Invalid input');
+    }
 
     // Extract booking details
     $routeID = $input['routeID'];
     $busNumber = $input['busNumber'];
     $fromLocation = $input['fromLocation'];
     $toLocation = $input['toLocation'];
-    $numSeats = $input['numSeats'];
+    $numSeats = (int)$input['numSeats'];
 
-    // Get the user ID (assuming user is logged in and user ID is stored in session)
-    session_start();
-    if (!isset($_SESSION['user_id'])) {
-        throw new Exception('User not logged in');
+    if ($numSeats <= 0) {
+        throw new Exception('Number of seats must be greater than zero');
     }
-    $userID = $_SESSION['user_id'];
 
-    $query = "INSERT INTO Reservation (ReservationID, user_id, RouteID, BusNumber, NumberOfSeatsReserved, status)
-    VALUES (NULL, :userID, :routeID, :busNumber, :numSeats, 'pending')";
+    // Check if there are enough free seats
+    $stmt = $conn->prepare("SELECT FreeSeats FROM Bus WHERE BusNumber = :busNumber");
+    $stmt->execute([':busNumber' => $busNumber]);
+    $bus = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$bus || $bus['FreeSeats'] < $numSeats) {
+        throw new Exception('Not enough free seats');
+    }
+
+    // Insert the reservation
+    $query = "INSERT INTO Reservation (user_id, RouteID, BusNumber, NumberOfSeatsReserved, status)
+              VALUES (:userID, :routeID, :busNumber, :numSeats, 'pending')";
 
     $stmt = $conn->prepare($query);
     $stmt->execute([
@@ -30,7 +57,6 @@ try {
         ':busNumber' => $busNumber,
         ':numSeats' => $numSeats
     ]);
-
 
     // Update the free seats in the Bus table
     $updateQuery = "UPDATE Bus SET FreeSeats = FreeSeats - :numSeats WHERE BusNumber = :busNumber";
@@ -43,7 +69,7 @@ try {
     echo json_encode(['success' => true]);
 } catch (PDOException $e) {
     http_response_code(500);
-    echo json_encode(['error' => $e->getMessage()]);
+    echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
 } catch (Exception $e) {
     http_response_code(400);
     echo json_encode(['error' => $e->getMessage()]);

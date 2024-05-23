@@ -128,7 +128,7 @@
 <body>
     <div class="navbar">
         <a href="admin_dashboard.php">Home</a>
-        <span class="admin-dashboard">TIkGate</span>
+        <span class="admin-dashboard">TickGate</span>
         <a class="logout" href="login_signup.html">Logout</a>
     </div>
     <div class="container">
@@ -156,7 +156,7 @@
         <!-- Add Bus Form -->
         <div class="bus-form">
             <h2>Add Bus</h2>
-            <form id="addBusForm" method="post" action="add_bus.php">
+            <form id="addBusForm">
                 <input type="text" name="busNumber" placeholder="Bus Number" required><br>
                 <input type="text" name="busType" placeholder="Bus Type" required><br>
                 <input type="text" name="contactNumber" placeholder="Contact Number" required><br>
@@ -164,7 +164,7 @@
                 <input type="text" name="bookedSeats" id="bookedSeats" placeholder="Booked Seats" required><br>
                 <!-- Add the readonly attribute for the Free Seats input -->
                 <input type="hidden" name="freeSeats" id="freeSeats"><br>
-                <input type="submit" name="addBus" value="Add Bus">
+                <input type="submit" value="Add Bus">
             </form>
         </div>
     </div>
@@ -201,7 +201,17 @@
                     btn.addEventListener('click', () => {
                         const busNumber = btn.getAttribute('data-busnumber');
                         if (confirm(`Are you sure you want to delete bus ${busNumber}?`)) {
-                            window.location.href = `delete_bus.php?busNumber=${busNumber}`;
+                            fetch(`delete_bus.php?busNumber=${busNumber}`, { method: 'GET' })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        // Refresh bus information after deletion
+                                        fetchBusInfo();
+                                    } else {
+                                        alert(data.error); // Display the error message in a popup
+                                        console.error('Error deleting bus:', data.error);
+                                    }
+                                });
                         }
                     });
                 });
@@ -214,8 +224,8 @@
                         const cells = row.querySelectorAll('td');
 
                         // Display editable fields
-                        cells[1].innerHTML = `<input type="text" name="contactNumber" value="${cells[1].textContent}">`;
-                        cells[2].innerHTML = `<input type="text" name="busType" value="${cells[2].textContent}">`;
+                        cells[1].innerHTML = `<input type="text" name="busType" value="${cells[1].textContent}">`;
+                        cells[2].innerHTML = `<input type="text" name="contactNumber" value="${cells[2].textContent}">`;
                         cells[3].innerHTML = `<input type="text" name="numberOfSeats" value="${cells[3].textContent}">`;
                         cells[4].innerHTML = `<input type="text" name="bookedSeats" value="${cells[4].textContent}">`;
 
@@ -229,8 +239,8 @@
                         row.querySelector('.saveBtn').addEventListener('click', () => {
                             const editedData = {
                                 busNumber: busNumber,
-                                contactNumber: row.querySelector('input[name="contactNumber"]').value,
                                 busType: row.querySelector('input[name="busType"]').value,
+                                contactNumber: row.querySelector('input[name="contactNumber"]').value,
                                 numberOfSeats: row.querySelector('input[name="numberOfSeats"]').value,
                                 bookedSeats: row.querySelector('input[name="bookedSeats"]').value
                             };
@@ -243,8 +253,9 @@
                                 },
                                 body: JSON.stringify(editedData)
                             })
-                            .then(response => {
-                                if (response.ok) {
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
                                     // Refresh bus information after update
                                     fetchBusInfo();
                                 } else {
@@ -263,14 +274,41 @@
             });
     }
 
+    // Add event listener to the add bus form
+    document.getElementById('addBusForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const formData = new FormData(this);
+
+        // Convert form data to a JSON object
+        const data = {};
+        formData.forEach((value, key) => (data[key] = value));
+
+        // Calculate free seats
+        data['freeSeats'] = data['numberOfSeats'] - data['bookedSeats'];
+
+        // Send the form data to the add_bus.php script
+        fetch('add_bus.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Refresh bus information after adding
+                fetchBusInfo();
+            } else {
+                console.error('Error adding bus:', data.error);
+            }
+        });
+    });
+
     // Call fetchBusInfo function initially to populate the table
     fetchBusInfo();
-</script>
-
-
-
-
-
+    </script>
 </body>
 
 </html>

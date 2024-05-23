@@ -15,7 +15,6 @@
         .navbar {
             position: fixed;
             top: 0;
-            /* Ensure navbar stays at the top of the screen */
             left: 0;
             width: 100%;
             background-color: #2A2D3A;
@@ -154,7 +153,18 @@
         </tbody>
     </table>
 
-
+    <!-- Add Customer Form -->
+    <div class="customer-form">
+        <h2>Add Customer</h2>
+        <form id="addCustomerForm" method="post" action="add_customer.php">
+            <input type="text" name="username" placeholder="Username" required><br>
+            <input type="text" name="email" placeholder="Email" required><br>
+            <input type="text" name="password" placeholder="Password" required><br>
+            <input type="text" name="userType" placeholder="User Type" required><br>
+            <input type="text" name="contactNumber" placeholder="Contact Number" required><br>
+            <input type="submit" name="addCustomer" value="Add Customer">
+        </form>
+    </div>
 
     <?php
     // Include the database connection file
@@ -163,7 +173,7 @@
     // Query to fetch customer information from the users table
     $query = "SELECT username, user_id, email, password, created_at, user_type, contact_number FROM users WHERE user_type = 'customer'";
     $result = $conn->query($query); // Using PDO query() method instead of mysqli_query()
-    
+
     if ($result) {
         // Check if there are any rows returned
         if ($result->rowCount() > 0) {
@@ -193,6 +203,7 @@
         // Function to populate the table with customer data
         function populateTable() {
             const userTableBody = document.getElementById('userTableBody');
+            userTableBody.innerHTML = ''; // Clear the table before repopulating
 
             userData.forEach(user => {
                 const row = document.createElement('tr');
@@ -212,23 +223,100 @@
             `;
                 userTableBody.appendChild(row);
             });
-        
 
-        // Add event listeners to delete buttons
-        document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const userID = btn.getAttribute('data-id');
-                if (confirm(`Are you sure you want to remove this User ${userID}?`)) {
-                    window.location.href = `delete_customer.php?userId=${userID}`;
-                }
+            // Add event listeners to delete buttons
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const userId = btn.getAttribute('data-id');
+                    if (confirm(`Are you sure you want to delete user ${userId}?`)) {
+                        fetch(`delete_customer.php?userId=${userId}`, { method: 'GET' })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // Refresh customer information after deletion
+                                    fetchCustomerInfo();
+                                } else {
+                                    alert(data.error); // Display the error message in a popup
+                                    console.error('Error deleting customer:', data.error);
+                                }
+                            });
+                    }
+                });
             });
-        });
-    }
+
+            // Add event listeners to edit buttons
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const userId = btn.getAttribute('data-id');
+                    const row = btn.closest('tr');
+                    const cells = row.querySelectorAll('td');
+
+                    // Display editable fields
+                    cells[0].innerHTML = `<input type="text" name="username" value="${cells[0].textContent}">`;
+                    cells[2].innerHTML = `<input type="text" name="email" value="${cells[2].textContent}">`;
+                    cells[3].innerHTML = `<input type="password" name="password" value="${cells[3].textContent}">`;
+                    cells[5].innerHTML = `<input type="text" name="userType" value="${cells[5].textContent}">`;
+                    cells[6].innerHTML = `<input type="text" name="contactNumber" value="${cells[6].textContent}">`;
+
+                    // Replace edit button with save and cancel buttons
+                    cells[7].innerHTML = `
+                        <button class="btn save-btn" data-id="${userId}">Save</button>
+                        <button class="btn cancel-btn">Cancel</button>
+                    `;
+
+                    // Add event listener to save button
+                    row.querySelector('.save-btn').addEventListener('click', () => {
+                        const editedData = {
+                            userId: userId,
+                            username: row.querySelector('input[name="username"]').value,
+                            email: row.querySelector('input[name="email"]').value,
+                            password: row.querySelector('input[name="password"]').value,
+                            userType: row.querySelector('input[name="userType"]').value,
+                            contactNumber: row.querySelector('input[name="contactNumber"]').value
+                        };
+
+                        // Send edited data to PHP script for update
+                        fetch('edit_customer.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(editedData)
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Refresh customer information after update
+                                fetchCustomerInfo();
+                            } else {
+                                console.error('Error updating customer information:', data.error);
+                            }
+                        });
+                    });
+
+                    // Add event listener to cancel button
+                    row.querySelector('.cancel-btn').addEventListener('click', () => {
+                        // Reload the page to revert changes
+                        location.reload();
+                    });
+                });
+            });
+        }
+
+        // Fetch customer information and populate the table
+        function fetchCustomerInfo() {
+            fetch('fetch_customer_info.php')
+                .then(response => response.json())
+                .then(data => {
+                    userData.length = 0; // Clear existing userData
+                    userData.push(...data); // Update userData with the fetched data
+                    populateTable(); // Populate the table with the updated data
+                });
+        }
+
         // Populate the table when the page loads
         populateTable();
     </script>
-
-
 </body>
 
 </html>

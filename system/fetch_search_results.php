@@ -45,7 +45,11 @@ try {
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    echo json_encode($results);
+    if (empty($results)) {
+        echo json_encode(['message' => 'Bus not available']);
+    } else {
+        echo json_encode($results);
+    }
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['error' => $e->getMessage()]);
