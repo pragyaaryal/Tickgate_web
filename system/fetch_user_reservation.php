@@ -2,56 +2,82 @@
 // Include the database connection file
 require_once 'db_connection.php';
 
-// Start the session (assuming sessions are used to store user information)
+// Start the session and check if the user is logged in
 session_start();
-
-// Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
-    // If user is not logged in, return error message
-    $response = array('error' => 'User not logged in');
-    header('Content-Type: application/json');
-    echo json_encode($response);
-    exit; // Stop further execution
+    http_response_code(403);
+    echo json_encode(['error' => 'User not logged in']);
+    exit;
 }
 
-// Get the logged-in user's ID
 $user_id = $_SESSION['user_id'];
 
-// Query to fetch reservations for the logged-in user, joining Reservation table with other tables
-$sql = "SELECT r.*, b.BusType, b.ContactNumber, rt.FromLocation, rt.Destination, rt.DepartureDate, rt.DepartureTime
-        FROM Reservation r
-        JOIN users u ON r.user_id = u.user_id
-        JOIN Route rt ON r.RouteID = rt.RouteID
-        JOIN Bus b ON r.BusNumber = b.BusNumber
-        WHERE r.user_id = $user_id";
-$result = $conn->query($sql);
+// Enable error reporting
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-// Array to store reservations
-$reservations = [];
+// Function to fetch user reservations
+function fetchUserReservations($conn, $user_id) {
+    // Query to fetch reservations and associated details
+    $sql = "SELECT u.username AS Username, 
+                   r.NumberOfSeatsReserved, 
+                   r.status, 
+                   rt.DepartureDate, 
+                   rt.DepartureTime, 
+                   rt.FromLocation, 
+                   rt.Destination, 
+                   r.BusNumber, 
+                   b.BusType, 
+                   b.ContactNumber
+            FROM Reservation r
+            INNER JOIN Route rt ON r.RouteID = rt.RouteID
+            INNER JOIN Bus b ON r.BusNumber = b.BusNumber
+            INNER JOIN users u ON r.user_id = u.user_id
+            WHERE r.user_id = ?";
 
-if ($result) {
-    // Check if any rows were returned
-    if ($result->num_rows > 0) {
-        // Fetching reservations data
-        while ($row = $result->fetch_assoc()) {
-            $reservations[] = $row;
-        }
-    } else {
-        // If no reservations found, return appropriate message
-        $response = array('message' => 'No reservations found for user ID: ' . $user_id);
-        header('Content-Type: application/json');
-        echo json_encode($response);
-        exit; // Stop further execution
+    // Prepare the SQL statement
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        throw new Exception('Prepare failed: ' . $conn->error);
     }
-} else {
-    // If there's an error executing the query, return error message
-    $response = array('error' => 'Error executing query: ' . $conn->error);
-    header('Content-Type: application/json');
-    echo json_encode($response);
-    exit; // Stop further execution
+
+    // Bind parameters and execute the statement
+    $stmt->bind_param("i", $user_id);
+    if (!$stmt->execute()) {
+        throw new Exception('Execute failed: ' . $stmt->error);
+    }
+
+    // Get the result set
+    $result = $stmt->get_result();
+    if (!$result) {
+        throw new Exception('Get result failed: ' . $stmt->error);
+    }
+
+    // Fetch reservations data
+    $reservations = [];
+    while ($row = $result->fetch_assoc()) {
+        $reservations[] = $row;
+    }
+
+    // Return the reservations array
+    return $reservations;
 }
 
-// Sending JSON response with reservations data
-header('Content-Type: application/json');
-echo json_encode($reservations);
+try {
+    // Fetch user reservations
+    $reservations = fetchUserReservations($conn, $user_id);
+
+    // Send JSON response
+    header('Content-Type: application/json');
+    echo json_encode($reservations);
+
+} catch (Exception $e) {
+    // Log the error to a file
+    error_log($e->getMessage(), 3, 'error_log.log');
+
+    // Send error response
+    http_response_code(500);
+    $response = ['error' => 'An error occurred while fetching reservations.'];
+    echo json_encode($response);
+}
 ?>

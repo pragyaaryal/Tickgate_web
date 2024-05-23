@@ -15,7 +15,7 @@
     <img src="logo.png" class="navbar-logo" alt="logo" />
     <ul class="navbar-list">
       <li><a href="user_dashboard.php">Home</a></li>
-      <li><a href="reservation.html" target="_blank">Reservation</a></li>
+      <li><a href="reservation.php" target="_blank">Reservation</a></li>
       <li><a href="#FAQs">FAQs</a></li>
       <li><a href="#Contact">Contact</a></li>
     </ul>
@@ -32,12 +32,12 @@
       </div>
 
       <ul class="profile-dropdown-list">
-        <li class="profile-dropdown-list-item">
+        <!-- <li class="profile-dropdown-list-item">
           <a href="#">
             <i class="fa-regular fa-user"></i>
             Edit Profile
           </a>
-        </li>
+        </li> -->
 
         <li class="profile-dropdown-list-item">
           <a href="setting.html" target="_blank">
