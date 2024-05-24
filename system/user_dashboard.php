@@ -1,6 +1,12 @@
 <?php
 session_start();
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+  header('Location: login_signup.html'); // Redirect to login page if not logged in
+  exit();
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -58,7 +64,7 @@ session_start();
         <hr />
 
         <li class="profile-dropdown-list-item">
-          <a href="login_signup.html">
+          <a href="logout.php">
             <i class="fa-solid fa-arrow-right-from-bracket"></i>
             Log out
           </a>

@@ -85,7 +85,7 @@ $stmt->closeCursor();
             </li>
             <hr />
             <li class="profile-dropdown-list-item">
-                <a href="login_signup.html">
+                <a href="logout.php">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i>
                     Log out
                 </a>
