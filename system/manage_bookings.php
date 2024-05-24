@@ -162,9 +162,9 @@
 
 <body>
     <div class="navbar">
-    <a href="admin_dashboard.php">Home</a>
-    <span class="admin-dashboard">TickGate</span>
-    <a class="logout" href="login_signup.html">Logout</a>
+        <a href="admin_dashboard.php">Home</a>
+        <span class="admin-dashboard">TickGate</span>
+        <a class="logout" href="login_signup.html">Logout</a>
     </div>
 
     <h1>Booking Management</h1>
@@ -184,61 +184,10 @@
             </tr>
         </thead>
         <tbody id="reservationTableBody">
-            <?php foreach ($reservationData as $reservation): ?>
-                <tr>
-                    <td>
-                        <?= $reservation['ReservationID'] ?>
-                    </td>
-                    <td>
-                        <?= $reservation['user_id'] ?>
-                    </td>
-                    <td>
-                        <?= $reservation['BusNumber'] ?>
-                    </td>
-                    <td>
-                        <?= $reservation['RouteID'] ?>
-                    </td>
-                    <td>
-                        <?= $reservation['NumberOfSeatsReserved'] ?>
-                    </td>
-                    <td>
-                        <?= $reservation['FromLocation'] ?>
-                    </td>
-                    <td>
-                        <?= $reservation['Destination'] ?>
-                    </td>
-                    <td>
-                        <?= $reservation['status'] ?>
-                    </td>
-                    <td>
-                        <select class="status-select" onchange="changeStatus(this)">
-                            <option value="" disabled selected>Change booking status</option>
-                            <option value="pending">Pending</option>
-                            <option value="approved">Approved</option>
-                        </select>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
+            <!-- Reservation data will be populated here by JavaScript -->
         </tbody>
     </table>
 
-    <!-- Route Form -->
-    <!-- <div class="route-form">
-        <h2>Add Reservations</h2>
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
-            <input type="text" name="user_id" placeholder="User ID" required><br>
-            <input type="text" name="BusNumber" placeholder="Bus Number" required><br>
-            <input type="text" name="RouteID" placeholder="Route ID" required><br>
-            <input type="number" name="NumberOfSeatsReserved" placeholder="Number of Seats Reserved" required><br>
-            <input type="text" name="FromLocationReserved" placeholder="From Location Reserved" required><br>
-            <input type="text" name="DestinationReserved" placeholder="Destination Reserved" required><br>
-            <select name="status" class="status-select" required>
-                <option value="" disabled selected>Select Status</option>
-                <option value="pending">Pending</option>
-                <option value="approved">Approved</option>
-            </select><br>
-            <input type="submit" value="Add Route">
-        </form>     -->
     <?php
     // Include your database connection file here
     include 'db_connection.php';
@@ -262,74 +211,78 @@
     // Close the database connection
     $conn = null;
     ?>
-<script>
-    // Initialize the reservationData variable with PHP data
-    const reservationData = <?php echo json_encode($reservationData); ?>;
 
-    // Function to populate the table with reservation data
-    function populateTable() {
-        const reservationTableBody = document.getElementById('reservationTableBody');
+    <script>
+        // Initialize the reservationData variable with PHP data
+        const reservationData = <?php echo json_encode($reservationData); ?>;
 
-        reservationData.forEach(reservation => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${reservation.ReservationID}</td>
-                <td>${reservation.user_id}</td>
-                <td>${reservation.BusNumber}</td>
-                <td>${reservation.RouteID}</td>
-                <td>${reservation.NumberOfSeatsReserved}</td>
-                <td>${reservation.FromLocation}</td>
-                <td>${reservation.Destination}</td>
-                <td>${reservation.status}</td>
-                <td>
-                    <select class="status-select" onchange="changeStatus(this)">
-                        <option value="pending">Pending</option>
-                        <option value="approved">Approved</option>
-                    </select>
-                </td>
-            `;
-            reservationTableBody.appendChild(row);
-        });
-    }
+        // Function to populate the table with reservation data
+        function populateTable() {
+            const reservationTableBody = document.getElementById('reservationTableBody');
 
-    // Populate the table when the page loads
-    populateTable();
+            reservationData.forEach(reservation => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${reservation.ReservationID}</td>
+                    <td>${reservation.user_id}</td>
+                    <td>${reservation.BusNumber}</td>
+                    <td>${reservation.RouteID}</td>
+                    <td>${reservation.NumberOfSeatsReserved}</td>
+                    <td>${reservation.FromLocation}</td>
+                    <td>${reservation.Destination}</td>
+                    <td>${reservation.status}</td>
+                    <td>
+                        <select class="status-select" onchange="changeStatus(this)">
+                            <option value="" disabled selected>Change booking status</option>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                        </select>
+                    </td>
+                `;
+                reservationTableBody.appendChild(row);
+            });
+        }
 
-    // Function to handle status change for a single row
-    function changeStatus(select) {
-        const reservationId = select.parentNode.parentNode.getAttribute('data-id');
-        const newStatus = select.value;
+        // Populate the table when the page loads
+        populateTable();
 
-        // Send AJAX request to update status in the database
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'update_booking_status.php');
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                const response = JSON.parse(xhr.responseText);
-                if (response.success) {
-                    // Update status in the table
-                    select.parentNode.previousElementSibling.textContent = newStatus;
-                    // Show alert if status is changed to approved or pending
-                    if (newStatus === 'approved') {
-                        alert('Reservation status changed to Approved.');
-                    } else if (newStatus === 'pending') {
-                        alert('Reservation status changed to Pending.');
+        function changeStatus(select) {
+            const reservationId = select.closest('tr').querySelector('td:first-child').textContent.trim();
+            const newStatus = select.value;
+
+            // Send AJAX request to update status in the database
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'update_booking_status.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.success) {
+                        // Update status in the table
+                        select.parentNode.previousElementSibling.textContent = newStatus;
+                        // Show alert if status is changed to approved or pending
+                        if (newStatus === 'approved') {
+                            alert('Reservation status changed to Approved.');
+                        } else if (newStatus === 'pending') {
+                            alert('Reservation status changed to Pending.');
+                        }
+                    } else {
+                        // Show error message
+                        alert('Failed to update status: ' + response.message);
                     }
                 } else {
                     // Show error message
-                    alert('Failed to update status.');
+                    alert('Failed to update status. Server responded with status: ' + xhr.status);
                 }
-            }
-        };
-        xhr.send('reservationId=' + encodeURIComponent(reservationId) + '&status=' + encodeURIComponent(newStatus));
-    }
-</script>
-</body>
+            };
+            xhr.onerror = function () {
+                // Show error message
+                alert('Request failed.');
+            };
+            xhr.send('reservationId=' + encodeURIComponent(reservationId) + '&status=' + encodeURIComponent(newStatus));
+        }
 
-</html>
-
-
+    </script>
 </body>
 
 </html>

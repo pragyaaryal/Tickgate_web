@@ -88,5 +88,4 @@ $conn = null;
             userTableBody.appendChild(row);
         });
     }
-
-?>
+</script>

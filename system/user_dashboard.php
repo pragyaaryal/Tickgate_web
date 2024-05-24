@@ -18,7 +18,7 @@ session_start();
     <img src="logo.png" class="navbar-logo" alt="logo" />
     <ul class="navbar-list">
       <li><a href="user_dashboard.php">Home</a></li>
-      <li><a href="reservation.php">Reservation</a></li>
+      <li><a href="user_reservation.php">Reservation</a></li>
       <li><a href="#FAQs">FAQs</a></li>
       <li><a href="#Contact">Contact</a></li>
     </ul>
