@@ -1,3 +1,11 @@
+<?php
+session_start();
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+  header('Location: login_signup.html'); // Redirect to login page if not logged in
+  exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -129,7 +137,7 @@
     <div class="navbar">
         <a href="admin_dashboard.php">Home</a>
         <span class="admin-dashboard">TickGate</span>
-        <a class="logout" href="login_signup.html">Logout</a>
+        <a class="logout" href="logout.php">Logout</a>
     </div>
 
     <h1>Customer Management</h1>
